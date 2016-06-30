@@ -78,7 +78,6 @@ def writeTestFail(ws, failedItem):
 			else:
 				applyBorder(c)
 
-	return ws
 
 
 #def detailedBlock(soup):
@@ -154,8 +153,6 @@ def writeDetailed(ws, soup):
 		rowi +=1
 		ws.append([])
 
-	return ws
-
 
 def writeTestSummary(ws, values):
 	colName = ('CTS version','Test timeout','Host Info',
@@ -169,8 +166,6 @@ def writeTestSummary(ws, values):
 
 	for h, v in zip(colName, values):
 		ws.append([h,v])
-
-	return ws
 
 
 
@@ -204,7 +199,6 @@ def resizeCol(ws):
 
 		ws.column_dimensions[get_column_letter(i)].width = colWidth
 		colWidth = 10
-	return ws
 
 
 
@@ -225,29 +219,29 @@ def main():
 	ws = wb.active
 	ws.title = 'First Run'
 	summaryInfo = findTestSummary(first_soup)
-	ws = writeTestSummary(ws, summaryInfo)
+	writeTestSummary(ws, summaryInfo)
 
 	failedItem = findTestNotPass(first_soup)
-	ws = writeTestFail(ws, failedItem)
+	writeTestFail(ws, failedItem)
 
-	ws = resizeCol(ws)
+	resizeCol(ws)
 
 
 	last_soup = bs(open(args.last_name),'xml')
 	ws = wb.create_sheet()
 	ws.title = 'Last Run'
 	summaryInfo = findTestSummary(last_soup)
-	ws = writeTestSummary(ws, summaryInfo)
+	writeTestSummary(ws, summaryInfo)
 	failedItem = findTestFail(last_soup)
-	ws = writeTestFail(ws, failedItem)
-	ws = resizeCol(ws)
+	writeTestFail(ws, failedItem)
+	resizeCol(ws)
 
 
-	ws_detail = wb.create_sheet()
-	ws_detail.title = 'Detailed Test Report'
+	ws = wb.create_sheet()
+	ws.title = 'Detailed Test Report'
 
-	ws_detail = writeDetailed(ws_detail, last_soup)
-	ws_detail = resizeCol(ws_detail)
+	writeDetailed(ws, last_soup)
+	resizeCol(ws)
 
 
 	wb.save(args.output)
